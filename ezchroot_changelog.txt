@@ -1,0 +1,39 @@
+EasyChroot! 
+The brainchild of Jake
+With so many different issues with chroot, why not just make a stinkin' script?
+So keyboard hit the 'nano' and off I went!
+This is my re-introduction to bash scripting.
+I had a previous script that actually utilized tools like 'parted' and made visual menus, but has since been wiped from existence.
+So I made a new one. This one will be taken a step at a time.
+
+Version key:
+The last number is for minor code changes
+The second number is for added support
+The first number is for major changes (e.g. dialouge menus, which will come in v 1.0.0)
+v 0.0.0 is trash
+
+>#Changelog!#<
+>EasyChroot v 0.0.0
+Hot glue guns and duct tape! 
+The initial patching together of commands and if/then's. 
+Only WSL support for now.
+
+>EasyChroot v 0.0.1
+Woohoo! It actually runs!
+Made the mental move from TI-BASIC to BASH scripting for if/then.
+'Check if root' actually works now.
+Fixed 'if' arguments.
+Noted: TI-Basic is a hell-of-a-lot different than BASH.
+
+>EasyChroot v 0.0.2
+Did some tyding for looks inside and outside
+Added native linux support
+Fixed an issue where had you not have mounted your partitions in Windows, it teleported you to linux.
+Fixed an issue where a missing quotation mark screwed eveything up
+Updated some dialouges
+
+>EasyChroot v 0.1.0
+First 0.0.3 release!
+Added native Ubuntu and Debian support using parted
+Fixed an issue mounting a drive with the -t option and no parameter
+

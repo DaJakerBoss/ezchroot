@@ -1,0 +1,117 @@
+#!/bin/bash
+#I made a chroot program bc I am forgetful
+
+## Welcome to EasyChroot ##
+## v0.1.0
+## I'm just gonna list the commands for now
+## mkdir /mnt
+## cd /
+## mount -t [ext3|ext4] /dev/sdXY /mnt
+## mount -t proc proc /mnt/proc
+## mount -t sysfs sys /mnt/sys
+## mount -o bind /dev /mnt/dev
+## chroot /mnt /bin/bash
+## sudo umount --force /dev/sdXY
+
+# Startup
+clear
+echo "EasyChroot v. 0.0.2"
+echo ""
+
+# Check if root
+if [[ $EUID -ne 0 ]];
+	then
+		echo "Sorry, but this script must be run as root."
+		echo "Try running 'sudo ./ezchroot' or run 'sudo -i' before execution"
+		## clear
+   	exit 1
+fi
+
+##WSL Support##
+echo "Are you using WSL?"
+echo "(Yes=y, No=n)"
+read WSL
+
+if [[ $WSL = "y" ]]
+	then
+		echo ""
+		echo "You must install an ext mounter for Windows"
+		echo "Have you mounted your partitions in Windows?"
+		read win
+		## Dependency check. Kind of.
+		if [[ $win = "y" ]]
+			then
+				echo ""
+				echo "Okay! To what partition have you mounted your linux partition?"
+				echo "Just the partition letter in lower case"
+				read winmount
+				echo ""
+				echo "entering partition"
+				cd /mnt/"$winmount"
+				sleep 1
+				echo "getting ready"
+				mount -t proc proc /mnt/"$winmount"/proc
+				mount -t sysfs sys /mnt/"$winmount"/sys
+				mount -o bind /dev /mnt/"$winmount"/dev
+				sleep 1
+				echo "chroot-ing *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND*"
+				sleep 5
+				chroot /mnt/"$winmount" /bin/bash
+			else
+				echo ""
+				echo "Okay, you can download Ext2Fsd and mount your partition"
+				## clear
+				exit
+		fi
+fi
+
+##Linux Support
+echo ""
+echo "Do you know where your drive is located?"
+read d
+echo ""
+if [[ $d = "y" ]]
+	then
+		echo "Great! Put it in the form of sdXY for me"
+		echo "e.g. sda2, or sdb3, or sdc1"
+		read drive
+		echo ""
+	else
+		## Debian-specific support
+		dist=`awk '/DISTRIB_ID/{print}' /etc/*release`
+			if [[ $dist = "DISTRIB_ID=Ubuntu" ]] || [[ $dist = "DISTRIB_ID=Debian" ]]
+				then
+					part=`command -v parted`
+					if [[ $part = "/sbin/parted" ]]
+						then
+							parted -l
+							echo "From this list, type your target partition in the form of 'sdxY'"
+							echo "e.g. sda2, or sdb3, or sdc1"
+							read drive
+							echo ""
+						else
+							echo "Sorry, but parted is required to run this script"
+							echo
+							exit
+					fi
+				else
+				echo "Okay! I'd help you find it, but this feature isn't quite available for your system yet."
+				echo "This will come in a later version coming soon."
+				## clear
+				exit
+			fi
+fi
+echo "Great, let's get started"
+echo "Mounting"
+mkdir /mnt
+mount /dev/"$drive" /mnt
+mount -t proc proc /mnt/proc
+mount -t sysfs sys /mnt/sys
+mount -o bind /dev /mnt/dev
+clear
+echo "chroot-ing! *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND!!!*"
+sleep 5
+chroot /mnt /bin/bash
+exec umount -f /dev/"$drive"
+clear
+exit
