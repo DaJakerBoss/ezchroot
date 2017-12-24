@@ -91,8 +91,22 @@ if [[ $d = "y" ]]
 							echo ""
 						else
 							echo "Sorry, but parted is required to run this script"
-							echo
-							exit
+							echo "Don't worry, we can install it for you."
+							echo "Would you like us to do that?"
+							read inst
+							if [[ $inst = "y" ]]
+								then
+									apt install parted --assume-yes
+									clear
+									parted -l
+									echo "From this list, type your target partition in the form
+									echo "e.g. sda2, or sdb3, or sdc1"
+									read drive
+									echo ""
+								else
+									echo "Okay, you'll need to install that first."
+									exit
+							fi
 					fi
 				else
 				echo "Okay! I'd help you find it, but this feature isn't quite available for your system yet."
