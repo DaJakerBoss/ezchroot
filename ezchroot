@@ -15,7 +15,7 @@
 
 # Startup
 clear
-echo "EasyChroot v. 0.0.2"
+echo "EasyChroot v. 0.0.4"
 echo ""
 
 # Check if root
@@ -78,8 +78,8 @@ if [[ $d = "y" ]]
 		echo ""
 	else
 		## Debian-specific support
-		dist=`awk '/DISTRIB_ID/{print}' /etc/*release`
-			if [[ $dist = "DISTRIB_ID=Ubuntu" ]] || [[ $dist = "DISTRIB_ID=Debian" ]]
+		dist=`awk '/ID_LIKE/{print}' /etc/*release`
+			if [[ $dist = "ID_LIKE=debian" ]]
 				then
 					part=`command -v parted`
 					if [[ $part = "/sbin/parted" ]]
@@ -99,7 +99,7 @@ if [[ $d = "y" ]]
 									apt install parted --assume-yes
 									clear
 									parted -l
-									echo "From this list, type your target partition in the form
+									echo "From this list, type your target partition in the form of 'sdXY'"
 									echo "e.g. sda2, or sdb3, or sdc1"
 									read drive
 									echo ""

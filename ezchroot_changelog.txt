@@ -32,8 +32,12 @@ Fixed an issue where had you not have mounted your partitions in Windows, it tel
 Fixed an issue where a missing quotation mark screwed eveything up
 Updated some dialouges
 
->EasyChroot v 0.1.0
-First 0.0.3 release!
+>EasyChroot v 0.0.3
 Added native Ubuntu and Debian support using parted
 Fixed an issue mounting a drive with the -t option and no parameter
 
+>EasyChroot v 0.0.4
+Changed method of OS idenification from DISTRIB_ID to ID_LIKE.
+Added apt installer for Debian. Now Universal.
+Remembered to change version number in the script.
+Those quotation marks are going to kill me.
