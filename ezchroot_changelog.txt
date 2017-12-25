@@ -41,3 +41,9 @@ Changed method of OS idenification from DISTRIB_ID to ID_LIKE.
 Added apt installer for Debian. Now Universal.
 Remembered to change version number in the script.
 Those quotation marks are going to kill me.
+
+>EasyChroot v 0.0.5
+Added SUSE support
+silent zypper
+added conditionals for install `parted`
+' and " are interchangeble, I guess. I hate bash.

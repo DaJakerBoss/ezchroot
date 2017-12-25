@@ -77,9 +77,9 @@ if [[ $d = "y" ]]
 		read drive
 		echo ""
 	else
-		## Debian-specific support
+		## Debian-based and SUSE support
 		dist=`awk '/ID_LIKE/{print}' /etc/*release`
-			if [[ $dist = "ID_LIKE=debian" ]]
+			if [[ $dist = "ID_LIKE=debian" ]] || [[ $dist = 'ID_LIKE="suse"' ]] 
 				then
 					part=`command -v parted`
 					if [[ $part = "/sbin/parted" ]]
@@ -96,13 +96,26 @@ if [[ $d = "y" ]]
 							read inst
 							if [[ $inst = "y" ]]
 								then
-									apt install parted --assume-yes
-									clear
-									parted -l
-									echo "From this list, type your target partition in the form of 'sdXY'"
-									echo "e.g. sda2, or sdb3, or sdc1"
-									read drive
-									echo ""
+									if [[ $dist = "ID_LIKE=debian" ]]
+										then
+										apt install parted --assume-yes
+										clear
+										parted -l
+										echo "From this list, type your target partition in the form of 'sdXY'"
+										echo "e.g. sda2, or sdb3, or sdc1"
+										read drive
+										echo ""
+									fi
+									if [[ $dist = 'ID_LIKE="suse"' ]]
+										then
+										zypper -n install parted
+										clear
+										parted -l
+										echo "From this list, type your target partition in the form of 'sdXY'"
+										echo "e.g. sda2, or sdb3, or sdc1"
+										read drive
+										echo ""
+									fi
 								else
 									echo "Okay, you'll need to install that first."
 									exit
