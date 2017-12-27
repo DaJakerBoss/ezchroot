@@ -11,7 +11,7 @@ The easychroot_changelog.txt should have everything you need for changes I have 
 
 Enjoy!
 
-###Usage
+### Usage
 EasyChroot must be run as root. Simply running `sudo ./ezchroot` in its directory should do the trick.
 
 For everywhere I have forgotten to give you an option for Yes/No, "y" always means Yes, and "n" always means No
