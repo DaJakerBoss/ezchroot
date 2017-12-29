@@ -47,3 +47,6 @@ Added SUSE support
 silent zypper
 added conditionals for install `parted`
 ' and " are interchangeble, I guess. I hate bash.
+
+>EasyCHroot 0.0.6 
+Gave chroot internet access

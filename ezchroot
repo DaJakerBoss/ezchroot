@@ -2,7 +2,7 @@
 #I made a chroot program bc I am forgetful
 
 ## Welcome to EasyChroot ##
-## v0.1.0
+## v0.0.6
 ## I'm just gonna list the commands for now
 ## mkdir /mnt
 ## cd /
@@ -15,7 +15,7 @@
 
 # Startup
 clear
-echo "EasyChroot v. 0.0.4"
+echo "EasyChroot v. 0.0.6"
 echo ""
 
 # Check if root
@@ -53,6 +53,7 @@ if [[ $WSL = "y" ]]
 				mount -t proc proc /mnt/"$winmount"/proc
 				mount -t sysfs sys /mnt/"$winmount"/sys
 				mount -o bind /dev /mnt/"$winmount"/dev
+				mount --bind /etc/resolv.conf /mnt/"$winmount"/etc/resolv.conf
 				sleep 1
 				echo "chroot-ing *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND*"
 				sleep 5
@@ -135,6 +136,7 @@ mount /dev/"$drive" /mnt
 mount -t proc proc /mnt/proc
 mount -t sysfs sys /mnt/sys
 mount -o bind /dev /mnt/dev
+mount --bind /etc/resolv.conf /mnt/etc/resolv.conf
 clear
 echo "chroot-ing! *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND!!!*"
 sleep 5
