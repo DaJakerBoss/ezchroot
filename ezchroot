@@ -47,6 +47,7 @@ if [[ $WSL = "y" ]]
 				read winmount
 				echo ""
 				echo "entering partition"
+				mount -t drvfs "$winmount": /mnt/"$winmount"/
 				cd /mnt/"$winmount"
 				sleep 1
 				echo "getting ready"
@@ -58,6 +59,8 @@ if [[ $WSL = "y" ]]
 				echo "chroot-ing *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND*"
 				sleep 5
 				chroot /mnt/"$winmount" /bin/bash
+				umount -l /mnt/"$winmount"
+				exit
 			else
 				echo ""
 				echo "Okay, you can download Ext2Fsd and mount your partition"
