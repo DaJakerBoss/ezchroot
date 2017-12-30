@@ -81,9 +81,10 @@ if [[ $d = "y" ]]
 		read drive
 		echo ""
 	else
-		## Debian-based and SUSE support
-		dist=`awk '/ID_LIKE/{print}' /etc/*release`
-			if [[ $dist = "ID_LIKE=debian" ]] || [[ $dist = 'ID_LIKE="suse"' ]] 
+		## Debian-based and SUSE and Fedora support
+		fedora=`awk '/ID=fedora/{print}' /etc/*release
+		distlk=`awk '/ID_LIKE/{print}' /etc/*release`
+			if [[ $distlk = "ID_LIKE=debian" ]] || [[ $distlk = 'ID_LIKE="suse"' ]] || [[ $fedora = "ID=fedora" ]]
 				then
 					part=`command -v parted`
 					if [[ $part = "/sbin/parted" ]]
@@ -120,6 +121,16 @@ if [[ $d = "y" ]]
 										read drive
 										echo ""
 									fi
+									if [[ $fedora = "ID=fedora" ]]
+										then
+										dnf install parted -y
+										clear
+										parted -l
+										echo "From this list, type your target partition in the form of 'sdXY'"
+										echo "e.g. sda2, or sd3, or sdc1"
+										read drive
+										echo ""
+									fi
 								else
 									echo "Okay, you'll need to install that first."
 									exit
@@ -144,6 +155,6 @@ clear
 echo "chroot-ing! *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND!!!*"
 sleep 5
 chroot /mnt /bin/bash
-exec umount -f /dev/"$drive"
+exec umount -l /dev/"$drive"
 clear
 exit
