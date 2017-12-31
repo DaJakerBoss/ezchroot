@@ -48,5 +48,10 @@ silent zypper
 added conditionals for install `parted`
 ' and " are interchangeble, I guess. I hate bash.
 
->EasyCHroot 0.0.6 
+>EasyChroot 0.0.6 
 Gave chroot internet access
+
+>EasyChroot 0.0.7
+Removed WSL support due to some systematical errors
+Rewrote the `parted` conditional because it was checking for OS support instead of checking if `parted` exists.
+If you think you can get WSL to work then feel free to edit those first few lines to reenable it.
