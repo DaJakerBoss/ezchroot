@@ -28,9 +28,10 @@ if [[ $EUID -ne 0 ]];
 fi
 
 ##WSL Support##
-echo "Are you using WSL?"
-echo "(Yes=y, No=n)"
-read WSL
+#echo "Are you using WSL?"
+#echo "(Yes=y, No=n)"
+#read WSL
+wsl=""
 
 if [[ $WSL = "y" ]]
 	then
@@ -81,67 +82,63 @@ if [[ $d = "y" ]]
 		read drive
 		echo ""
 	else
-		## Debian-based and SUSE and Fedora support
-		fedora=`awk '/ID=fedora/{print}' /etc/*release
-		distlk=`awk '/ID_LIKE/{print}' /etc/*release`
-			if [[ $distlk = "ID_LIKE=debian" ]] || [[ $distlk = 'ID_LIKE="suse"' ]] || [[ $fedora = "ID=fedora" ]]
-				then
-					part=`command -v parted`
-					if [[ $part = "/sbin/parted" ]]
+		
+		part=`command -v parted`
+		if [[ $part = "/sbin/parted" ]]
+			then
+				parted -l
+				echo "From this list, type your target partition in the form of 'sdxY'"
+				echo "e.g. sda2, or sdb3, or sdc1"
+				read drive
+				echo ""
+			else
+				fedora=`awk '/ID=fedora/{print}' /etc/*release`
+				distlk=`awk '/ID_LIKE/{print}' /etc/*release`
+				if [[ $distlk = "ID_LIKE=debian" ]] || [[ $distlk = 'ID_LIKE="suse"' ]] || [[ $fedora = "ID=fedora" ]]
+					then
+					echo "Sorry, but parted is required to run this script"
+					echo "Don't worry, we can install it for you."
+					echo "Would you like us to do that?"
+					read inst
+					if [[ $inst = "y" ]]
 						then
-							parted -l
-							echo "From this list, type your target partition in the form of 'sdxY'"
-							echo "e.g. sda2, or sdb3, or sdc1"
-							read drive
-							echo ""
+						if [[ $dist = "ID_LIKE=debian" ]]
+							then
+								apt install parted --assume-yes
+								clear
+								parted -l
+								echo "From this list, type your target partition in the form of 'sdXY'"
+								echo "e.g. sda2, or sdb3, or sdc1"
+								read drive
+								echo ""
+						fi
+						if [[ $dist = 'ID_LIKE="suse"' ]]
+							then
+								zypper -n install parted
+								clear
+								parted -l
+								echo "From this list, type your target partition in the form of 'sdXY'"
+								echo "e.g. sda2, or sdb3, or sdc1"
+								read drive
+								echo ""
+						fi
+						if [[ $fedora = "ID=fedora" ]]
+							then
+								dnf install parted -y
+								clear
+								parted -l
+								echo "From this list, type your target partition in the form of 'sdXY'"
+								echo "e.g. sda2, or sd3, or sdc1"
+								read drive
+								echo ""
+						fi
 						else
-							echo "Sorry, but parted is required to run this script"
-							echo "Don't worry, we can install it for you."
-							echo "Would you like us to do that?"
-							read inst
-							if [[ $inst = "y" ]]
-								then
-									if [[ $dist = "ID_LIKE=debian" ]]
-										then
-										apt install parted --assume-yes
-										clear
-										parted -l
-										echo "From this list, type your target partition in the form of 'sdXY'"
-										echo "e.g. sda2, or sdb3, or sdc1"
-										read drive
-										echo ""
-									fi
-									if [[ $dist = 'ID_LIKE="suse"' ]]
-										then
-										zypper -n install parted
-										clear
-										parted -l
-										echo "From this list, type your target partition in the form of 'sdXY'"
-										echo "e.g. sda2, or sdb3, or sdc1"
-										read drive
-										echo ""
-									fi
-									if [[ $fedora = "ID=fedora" ]]
-										then
-										dnf install parted -y
-										clear
-										parted -l
-										echo "From this list, type your target partition in the form of 'sdXY'"
-										echo "e.g. sda2, or sd3, or sdc1"
-										read drive
-										echo ""
-									fi
-								else
-									echo "Okay, you'll need to install that first."
-									exit
-							fi
+						echo "Sorry! You need to install parted before we can continue"
+						echo "I am not programed to install it on your system."
+						exit
 					fi
-				else
-				echo "Okay! I'd help you find it, but this feature isn't quite available for your system yet."
-				echo "This will come in a later version coming soon."
-				## clear
-				exit
-			fi
+				fi
+		fi
 fi
 echo "Great, let's get started"
 echo "Mounting"
