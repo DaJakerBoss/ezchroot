@@ -18,6 +18,37 @@ clear
 echo "EasyChroot v. 0.0.6"
 echo ""
 
+## Clear VARS
+d="0"
+f="0"
+s="0"
+
+## VARS: d {drive} s {silent} m {mount}
+while getopts "d:sm:" arg; do
+	case "${arg}"
+	in
+	d)
+		d=$OPTARG
+		;;
+	f)
+		f=$OPTARG
+		;;
+	s)
+		s="y"
+		;;
+	esac
+done
+
+if [[ $d != "0" ]] && [[ $s = "0" ]]
+	then
+		echo "User specified target device '$d'"
+fi
+if [[ $f != "0" ]] && [[ $s = "0" ]]
+	then
+		echo "User specified chroot dir '$f'"
+fi
+exit
+
 # Check if root
 if [[ $EUID -ne 0 ]];
 	then
@@ -71,25 +102,27 @@ if [[ $WSL = "y" ]]
 fi
 
 ##Linux Support
+if [[ $d != "0" ]]
+then echo ""
+else
 echo ""
 echo "Do you know where your drive is located?"
-read d
+read locate
 echo ""
-if [[ $d = "y" ]]
+if [[ $locate = "y" ]]
 	then
 		echo "Great! Put it in the form of sdXY for me"
 		echo "e.g. sda2, or sdb3, or sdc1"
-		read drive
+		read d
 		echo ""
 	else
-		
 		part=`command -v parted`
 		if [[ $part = "/sbin/parted" ]]
 			then
 				parted -l
 				echo "From this list, type your target partition in the form of 'sdxY'"
 				echo "e.g. sda2, or sdb3, or sdc1"
-				read drive
+				read d
 				echo ""
 			else
 				fedora=`awk '/ID=fedora/{print}' /etc/*release`
@@ -109,7 +142,7 @@ if [[ $d = "y" ]]
 								parted -l
 								echo "From this list, type your target partition in the form of 'sdXY'"
 								echo "e.g. sda2, or sdb3, or sdc1"
-								read drive
+								read d
 								echo ""
 						fi
 						if [[ $dist = 'ID_LIKE="suse"' ]]
@@ -119,7 +152,7 @@ if [[ $d = "y" ]]
 								parted -l
 								echo "From this list, type your target partition in the form of 'sdXY'"
 								echo "e.g. sda2, or sdb3, or sdc1"
-								read drive
+								read d
 								echo ""
 						fi
 						if [[ $fedora = "ID=fedora" ]]
@@ -129,7 +162,7 @@ if [[ $d = "y" ]]
 								parted -l
 								echo "From this list, type your target partition in the form of 'sdXY'"
 								echo "e.g. sda2, or sd3, or sdc1"
-								read drive
+								read d
 								echo ""
 						fi
 						else
@@ -140,14 +173,21 @@ if [[ $d = "y" ]]
 				fi
 		fi
 fi
+fi
 echo "Great, let's get started"
 echo "Mounting"
-mkdir /mnt
-mount /dev/"$drive" /mnt
-mount -t proc proc /mnt/proc
-mount -t sysfs sys /mnt/sys
-mount -o bind /dev /mnt/dev
-mount --bind /etc/resolv.conf /mnt/etc/resolv.conf
+if [[ $f != "0" ]]
+	then
+		echo ""
+	else
+		f="/mnt"
+fi
+mkdir "$f"
+mount /dev/"$d" "$f"
+mount -t proc proc "$f"/proc
+mount -t sysfs sys "$f"/sys
+mount -o bind /dev "$f"/mnt/dev
+mount --bind /etc/resolv.conf "$f"/etc/resolv.conf
 clear
 echo "chroot-ing! *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND!!!*"
 sleep 5
