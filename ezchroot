@@ -23,8 +23,10 @@ d="0"
 f="0"
 s="0"
 
+echo "Vars Cleared"
+
 ## VARS: d {drive} s {silent} m {mount}
-while getopts "d:sm:" arg; do
+while getopts "d:sf:" arg; do
 	case "${arg}"
 	in
 	d)
@@ -38,6 +40,7 @@ while getopts "d:sm:" arg; do
 		;;
 	esac
 done
+echo "Received user option"
 
 if [[ $d != "0" ]] && [[ $s = "0" ]]
 	then
@@ -47,7 +50,6 @@ if [[ $f != "0" ]] && [[ $s = "0" ]]
 	then
 		echo "User specified chroot dir '$f'"
 fi
-exit
 
 # Check if root
 if [[ $EUID -ne 0 ]];
@@ -57,6 +59,7 @@ if [[ $EUID -ne 0 ]];
 		## clear
    	exit 1
 fi
+echo "Confirmed Super Cow Powers"
 
 ##WSL Support##
 #echo "Are you using WSL?"
@@ -100,12 +103,14 @@ if [[ $WSL = "y" ]]
 				exit
 		fi
 fi
+echo "No WSL Support"
 
 ##Linux Support
-if [[ $d != "0" ]]
-then echo ""
+if [[ $d != 0 ]]
+then echo "Using user input for selected drive"
 else
 echo ""
+echo "No previously selected drive"
 echo "Do you know where your drive is located?"
 read locate
 echo ""
@@ -117,8 +122,12 @@ if [[ $locate = "y" ]]
 		echo ""
 	else
 		part=`command -v parted`
+		echo "Check for parted install"
 		if [[ $part = "/sbin/parted" ]]
 			then
+				echo "parted installed"
+				echo ""
+				sleep 1
 				parted -l
 				echo "From this list, type your target partition in the form of 'sdxY'"
 				echo "e.g. sda2, or sdb3, or sdc1"
@@ -174,11 +183,13 @@ if [[ $locate = "y" ]]
 		fi
 fi
 fi
+
+echo "Completed device selection"
 echo "Great, let's get started"
 echo "Mounting"
 if [[ $f != "0" ]]
 	then
-		echo ""
+		echo "Using user specified mount point"
 	else
 		f="/mnt"
 fi
@@ -190,7 +201,7 @@ mount -o bind /dev "$f"/mnt/dev
 mount --bind /etc/resolv.conf "$f"/etc/resolv.conf
 clear
 echo "chroot-ing! *MAKE SURE TO KILL EVERYTHING BEFORE RUNNING THE EXIT COMMAND!!!*"
-sleep 5
+sleep 3
 chroot /mnt /bin/bash
 exec umount -l /dev/"$drive"
 clear
